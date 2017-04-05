@@ -11,7 +11,7 @@ LRESULT CALLBACK WindowProcedure (HWND, UINT, WPARAM, LPARAM);
 
 int rboption = 6;
 bool foundlocale = false;
-HWND txtRealmlist, rbtnNoChange, rbtnLocalhost, rbtnVGaming, rbtnRebirth, rbtnKronos, rbtnNostalrius, rbtnFeenix, rbtnSetTo, lblRealmlist, btnStart, btnOpenDirectory, btnWebsite, btnAbout, btnExit;
+HWND txtRealmlist, rbtnNoChange, rbtnLocalhost, rbtnSmolder, rbtnHell, rbtnLooking, rbtnExcalibur, rbtnFeenix, rbtnSetTo, lblRealmlist, btnStart, btnOpenDirectory, btnWebsite, btnAbout, btnExit;
 
 /*  Make the class name into a global variable  */
 char szClassName[ ] = "WindowsApp";
@@ -34,8 +34,8 @@ int WINAPI WinMain (HINSTANCE hThisInstance,
     wincl.cbSize = sizeof (WNDCLASSEX);
 
     /* Use default icon and mouse-pointer */
-    wincl.hIcon = LoadIcon (hThisInstance, MAKEINTRESOURCE(IDI_MYICOB));
-    wincl.hIconSm = LoadIcon (hThisInstance, MAKEINTRESOURCE(IDI_MYICOS));
+    wincl.hIcon = LoadIcon (hThisInstance, MAKEINTRESOURCE(IDI_MYICOH));
+    wincl.hIconSm = LoadIcon (hThisInstance, MAKEINTRESOURCE(IDI_MYICOJ));
     wincl.hCursor = LoadCursor (NULL, IDC_ARROW);
     wincl.lpszMenuName = NULL;                 /* No menu */
     wincl.cbClsExtra = 0;                      /* No extra bytes after the window class */
@@ -51,7 +51,7 @@ int WINAPI WinMain (HINSTANCE hThisInstance,
     hwnd = CreateWindowEx (
            0,                   /* Extended possibilites for variation */
            szClassName,         /* Classname */
-           "WoW Launcher by brotalnia for Vanilla",       /* Title Text */
+           "WoW Launcher by brotalnia for TBC",       /* Title Text */
            WS_SYSMENU | WS_MINIMIZEBOX, /* default window */
            CW_USEDEFAULT,       /* Windows decides the position */
            CW_USEDEFAULT,       /* where the window ends up on the screen */
@@ -113,14 +113,14 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
              SendDlgItemMessage(hwnd, 6, BM_SETCHECK, 1, 0);
              rbtnLocalhost = CreateWindowEx(0,  "BUTTON",  "Localhost",  WS_VISIBLE | WS_CHILD | BS_AUTORADIOBUTTON,  12, 54,   72,  17,  hwnd,  (HMENU) 7,  hInstance,  NULL);
              SendMessage(rbtnLocalhost,WM_SETFONT,(WPARAM)GetStockObject(DEFAULT_GUI_FONT),MAKELPARAM(1,0));
-             rbtnVGaming = CreateWindowEx(0,  "BUTTON",  "VanillaGaming",  WS_VISIBLE | WS_CHILD | BS_AUTORADIOBUTTON,  12, 77,   92,  17,  hwnd,  (HMENU) 8,  hInstance,  NULL);
-             SendMessage(rbtnVGaming,WM_SETFONT,(WPARAM)GetStockObject(DEFAULT_GUI_FONT),MAKELPARAM(1,0));
-             rbtnRebirth = CreateWindowEx(0,  "BUTTON",  "The Rebirth",  WS_VISIBLE | WS_CHILD | BS_AUTORADIOBUTTON,  12, 100,   82,  17,  hwnd,  (HMENU) 9,  hInstance,  NULL);
-             SendMessage(rbtnRebirth,WM_SETFONT,(WPARAM)GetStockObject(DEFAULT_GUI_FONT),MAKELPARAM(1,0));
-             rbtnKronos = CreateWindowEx(0,  "BUTTON",  "KRONOS",  WS_VISIBLE | WS_CHILD | BS_AUTORADIOBUTTON,  12, 123,   72,  17,  hwnd,  (HMENU) 10,  hInstance,  NULL);
-             SendMessage(rbtnKronos,WM_SETFONT,(WPARAM)GetStockObject(DEFAULT_GUI_FONT),MAKELPARAM(1,0));
-             rbtnNostalrius = CreateWindowEx(0,  "BUTTON",  "Nostalrius",  WS_VISIBLE | WS_CHILD | BS_AUTORADIOBUTTON,  12, 146,   72,  17,  hwnd,  (HMENU) 11,  hInstance,  NULL);
-             SendMessage(rbtnNostalrius,WM_SETFONT,(WPARAM)GetStockObject(DEFAULT_GUI_FONT),MAKELPARAM(1,0));
+             rbtnSmolder = CreateWindowEx(0,  "BUTTON",  "Smolderforge",  WS_VISIBLE | WS_CHILD | BS_AUTORADIOBUTTON,  12, 77,   90,  17,  hwnd,  (HMENU) 8,  hInstance,  NULL);
+             SendMessage(rbtnSmolder,WM_SETFONT,(WPARAM)GetStockObject(DEFAULT_GUI_FONT),MAKELPARAM(1,0));
+             rbtnHell = CreateWindowEx(0,  "BUTTON",  "HellGround",  WS_VISIBLE | WS_CHILD | BS_AUTORADIOBUTTON,  12, 100,   80,  17,  hwnd,  (HMENU) 9,  hInstance,  NULL);
+             SendMessage(rbtnHell,WM_SETFONT,(WPARAM)GetStockObject(DEFAULT_GUI_FONT),MAKELPARAM(1,0));
+             rbtnLooking = CreateWindowEx(0,  "BUTTON",  "Looking4Group",  WS_VISIBLE | WS_CHILD | BS_AUTORADIOBUTTON,  12, 123,   100,  17,  hwnd,  (HMENU) 10,  hInstance,  NULL);
+             SendMessage(rbtnLooking,WM_SETFONT,(WPARAM)GetStockObject(DEFAULT_GUI_FONT),MAKELPARAM(1,0));
+             rbtnExcalibur = CreateWindowEx(0,  "BUTTON",  "Excalibur WoW",  WS_VISIBLE | WS_CHILD | BS_AUTORADIOBUTTON,  12, 146,   100,  17,  hwnd,  (HMENU) 11,  hInstance,  NULL);
+             SendMessage(rbtnExcalibur,WM_SETFONT,(WPARAM)GetStockObject(DEFAULT_GUI_FONT),MAKELPARAM(1,0));
              rbtnFeenix = CreateWindowEx(0,  "BUTTON",  "Feenix (wow-one)",  WS_VISIBLE | WS_CHILD | BS_AUTORADIOBUTTON,  12, 169,   110,  17,  hwnd,  (HMENU) 12,  hInstance,  NULL);
              SendMessage(rbtnFeenix,WM_SETFONT,(WPARAM)GetStockObject(DEFAULT_GUI_FONT),MAKELPARAM(1,0));
              rbtnSetTo = CreateWindowEx(0,  "BUTTON",  "Set to:",  WS_VISIBLE | WS_CHILD | BS_AUTORADIOBUTTON,  12, 195,   52,  17,  hwnd,  (HMENU) 13,  hInstance,  NULL);
@@ -155,7 +155,7 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
                          {
                          std::ofstream myfile;
                          myfile.open (realmPath);
-                         myfile << "set realmlist Logon.vanillagaming.org\n";
+                         myfile << "set realmlist connect.smolderforge.com\n";
                          myfile.close();
                          }
                          break;
@@ -163,7 +163,7 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
                          {
                          std::ofstream myfile;
                          myfile.open (realmPath);
-                         myfile << "set realmlist wow.therebirth.net\n";
+                         myfile << "set realmlist logon.hellground.pl\n";
                          myfile.close();
                          }
                          break;
@@ -171,7 +171,7 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
                          {
                          std::ofstream myfile;
                          myfile.open (realmPath);
-                         myfile << "set realmlist wow.twinstar.cz\n";
+                         myfile << "set realmlist logon.looking4group.de\n";
                          myfile.close();
                          }
                          break;
@@ -179,7 +179,7 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
                          {
                          std::ofstream myfile;
                          myfile.open (realmPath);
-                         myfile << "set realmlist login.nostalrius.org\n";
+                         myfile << "set realmlist exwow-serv.exnw.com\n";
                          myfile.close();
                          }
                          break;
@@ -255,16 +255,16 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
                          ShellExecute(NULL, "open", "http://127.0.0.1", NULL, NULL, SW_SHOWDEFAULT);
                          break;
                     case 8:
-                         ShellExecute(NULL, "open", "http://www.vanillagaming.org", NULL, NULL, SW_SHOWDEFAULT);
+                         ShellExecute(NULL, "open", "https://www.smolderforge.com", NULL, NULL, SW_SHOWDEFAULT);
                          break;
                     case 9:
-                         ShellExecute(NULL, "open", "http://www.therebirth.net", NULL, NULL, SW_SHOWDEFAULT);
+                         ShellExecute(NULL, "open", "https://www.hellground.net", NULL, NULL, SW_SHOWDEFAULT);
                          break;
                     case 10:
-                         ShellExecute(NULL, "open", "http://www.kronos-wow.com", NULL, NULL, SW_SHOWDEFAULT);
+                         ShellExecute(NULL, "open", "http://www.looking4group.de", NULL, NULL, SW_SHOWDEFAULT);
                          break;
                     case 11:
-                         ShellExecute(NULL, "open", "https://en.nostalrius.org", NULL, NULL, SW_SHOWDEFAULT);
+                         ShellExecute(NULL, "open", "http://www.excalibur-wow.com", NULL, NULL, SW_SHOWDEFAULT);
                          break;
                     case 12:
                          ShellExecute(NULL, "open", "https://www.wow-one.com", NULL, NULL, SW_SHOWDEFAULT);
@@ -275,7 +275,7 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
              }
              break;
         case 4: //about button
-             MessageBox(NULL, "Made by brotalnia\nTested on Classic 1.12\nLast Change: 19 July 2015\nwww.youtube.com/brotalnia","About WoW Launcher", MB_OK | MB_DEFBUTTON1);
+             MessageBox(NULL, "Made by brotalnia\nTested on TBC 2.4.3\nLast Change: 19 July 2015\nwww.youtube.com/brotalnia","About WoW Launcher", MB_OK | MB_DEFBUTTON1);
              break;
         case 5: //exit button
              exit(0);
@@ -302,7 +302,7 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
                  }
                  break; 
              }
-        case 8: //vanillagaming radio button
+        case 8: //smolderforge radio button
              switch (HIWORD(wParam))
              {
                  case BN_CLICKED:
@@ -313,7 +313,7 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
                  }
                  break; 
              }
-        case 9: //rebirth radio button
+        case 9: //hellground radio button
              switch (HIWORD(wParam))
              {
                  case BN_CLICKED:
@@ -324,7 +324,7 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
                  }
                  break; 
              }
-        case 10: //kronos radio button
+        case 10: //looking4group radio button
              switch (HIWORD(wParam))
              {
                  case BN_CLICKED:
@@ -335,7 +335,7 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
                  }
                  break; 
              }
-        case 11: //nostalrius radio button
+        case 11: //excalibur radio button
              switch (HIWORD(wParam))
              {
                  case BN_CLICKED:
