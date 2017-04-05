@@ -1,0 +1,4 @@
+#include "resource.h"
+
+IDI_MYICOB ICON "wb.ico"
+IDI_MYICOS ICON "ws.ico"
