@@ -1,33 +1,33 @@
-# Project: WoW Launcher 2
-# Makefile created by Dev-C++ 4.9.9.2
+# Project: WoW Launcher
+# Makefile created by Dev-C++ 4.9.9.9
 
-CPP  = g++.exe
-CC   = gcc.exe
-WINDRES = windres.exe
-RES  = WoW_Launcher_2_private.res
-OBJ  = main.o $(RES)
+CPP      = g++.exe
+CC       = gcc.exe
+WINDRES  = windres.exe
+RES      = WoW_Launcher_private.res
+OBJ      = main.o $(RES)
 LINKOBJ  = main.o $(RES)
-LIBS =  -L"C:/Dev-Cpp/lib" -mwindows  
-INCS =  -I"C:/Dev-Cpp/include" 
-CXXINCS =  -I"C:/Dev-Cpp/lib/gcc/mingw32/3.4.2/include"  -I"C:/Dev-Cpp/include/c++/3.4.2/backward"  -I"C:/Dev-Cpp/include/c++/3.4.2/mingw32"  -I"C:/Dev-Cpp/include/c++/3.4.2"  -I"C:/Dev-Cpp/include" 
-BIN  = "WoW Launcher 2.exe"
+LIBS     = -L"D:/Dev-Cpp/lib" -L"D:/Dev-Cpp/lib/gcc" -static-libstdc++ -static-libgcc -mwindows  
+INCS     = -I"D:/Dev-Cpp/include" 
+CXXINCS  = -I"D:/Dev-Cpp/include"  -I"D:/Dev-Cpp/include/ddk"  -I"D:/Dev-Cpp/include/gdiplus"  -I"D:/Dev-Cpp/include/GL" 
+BIN      = "WoW Launcher.exe"
 CXXFLAGS = $(CXXINCS)  
-CFLAGS = $(INCS)  
-RM = rm -f
+CFLAGS   = $(INCS)  
+RM       = rm -f
 
 .PHONY: all all-before all-after clean clean-custom
 
-all: all-before "WoW Launcher 2.exe" all-after
+all: all-before "WoW Launcher.exe" all-after
 
 
 clean: clean-custom
 	${RM} $(OBJ) $(BIN)
 
 $(BIN): $(OBJ)
-	$(CPP) $(LINKOBJ) -o "WoW Launcher 2.exe" $(LIBS)
+	$(CPP) $(LINKOBJ) -o "WoW Launcher.exe" $(LIBS)
 
 main.o: main.cpp
 	$(CPP) -c main.cpp -o main.o $(CXXFLAGS)
 
-WoW_Launcher_2_private.res: WoW_Launcher_2_private.rc resource.rc 
-	$(WINDRES) -i WoW_Launcher_2_private.rc --input-format=rc -o WoW_Launcher_2_private.res -O coff 
+WoW_Launcher_private.res: WoW_Launcher_private.rc resource.rc 
+	$(WINDRES) -i WoW_Launcher_private.rc --input-format=rc -o WoW_Launcher_private.res -O coff 

@@ -1,13 +1,13 @@
 [Project]
-FileName=WoW Launcher 2.dev
-Name=WoW Launcher 2
-UnitCount=5
+FileName=WoW Launcher.dev
+Name=WoW Launcher
+UnitCount=4
 Type=0
 Ver=1
 ObjFiles=
 Includes=
 Libs=
-PrivateResource=WoW_Launcher_2_private.rc
+PrivateResource=WoW_Launcher_private.rc
 ResourceIncludes=
 MakeIncludes=
 Compiler=
@@ -18,7 +18,7 @@ Icon=
 ExeOutput=
 ObjectOutput=
 OverrideOutput=0
-OverrideOutputName=WoW Launcher 2.exe
+OverrideOutputName=WoW Launcher.exe
 HostApplication=
 Folders=
 CommandLine=
@@ -27,7 +27,7 @@ CustomMakefile=
 IncludeVersionInfo=1
 SupportXPThemes=1
 CompilerSet=0
-CompilerSettings=0000000000000000000000
+CompilerSettings=00000000000000000000000
 
 [Unit2]
 FileName=resource.h
@@ -59,14 +59,14 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [VersionInfo]
-Major=1
+Major=5
 Minor=0
 Release=0
 Build=0
 LanguageID=1033
 CharsetID=1252
 CompanyName=brotalnia
-FileVersion=1.0.0.0
+FileVersion=5.0.0.0
 FileDescription=WoW Launcher for Vanilla
 InternalName=WoW Launcher
 LegalCopyright=Copyright © brotalnia 2015
@@ -75,19 +75,10 @@ OriginalFilename=WoW Launcher
 ProductName=Realmlist Changer and WoW Launcher
 ProductVersion=1.0.0.0
 AutoIncBuildNr=0
+SyncProduct=0
 
 [Unit4]
 FileName=namestrip.h
-CompileCpp=1
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit5]
-FileName=direxists.h
 CompileCpp=1
 Folder=
 Compile=1
