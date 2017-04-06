@@ -3,11 +3,11 @@
   xmlns="urn:schemas-microsoft-com:asm.v1"
   manifestVersion="1.0">
 <assemblyIdentity
-    name="DevCpp.Apps.WoW_Launcher_2"
+    name="DevCpp.Apps.WoW_Launcher"
     processorArchitecture="x86"
     version="1.0.0.0"
     type="win32"/>
-<description>WoW Launcher 2</description>
+<description>WoW Launcher</description>
 <dependency>
     <dependentAssembly>
         <assemblyIdentity

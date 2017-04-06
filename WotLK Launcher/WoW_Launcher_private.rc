@@ -10,14 +10,14 @@
 // THIS WILL MAKE THE PROGRAM USE THE COMMON CONTROLS
 // LIBRARY VERSION 6.0 (IF IT IS AVAILABLE)
 //
-1 24 "WoW Launcher 2.exe.Manifest"
+1 24 "WoW Launcher.exe.Manifest"
 
 //
 // TO CHANGE VERSION INFORMATION, EDIT PROJECT OPTIONS...
 //
 1 VERSIONINFO
-FILEVERSION 2,1,0,0
-PRODUCTVERSION 2,1,0,0
+FILEVERSION 5,0,0,0
+PRODUCTVERSION 5,0,0,0
 FILETYPE VFT_APP
 {
   BLOCK "StringFileInfo"
@@ -25,14 +25,14 @@ FILETYPE VFT_APP
 		 BLOCK "040904E4"
 		 {
 			 VALUE "CompanyName", "brotalnia"
-			 VALUE "FileVersion", "2.1.0.0"
+			 VALUE "FileVersion", "5.0.0.0"
 			 VALUE "FileDescription", "WoW Launcher for WotLK"
 			 VALUE "InternalName", "WoW Launcher"
-			 VALUE "LegalCopyright", "Copyright © brotalnia 2015"
+			 VALUE "LegalCopyright", "Copyright © brotalnia 2017"
 			 VALUE "LegalTrademarks", ""
 			 VALUE "OriginalFilename", "WoW Launcher"
 			 VALUE "ProductName", "Realmlist Changer and WoW Launcher"
-			 VALUE "ProductVersion", "2.1.0.0"
+			 VALUE "ProductVersion", "3.0.0.0"
 		 }
 	 }
   BLOCK "VarFileInfo"

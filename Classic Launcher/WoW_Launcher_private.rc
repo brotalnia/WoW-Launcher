@@ -28,7 +28,7 @@ FILETYPE VFT_APP
 			 VALUE "FileVersion", "5.0.0.0"
 			 VALUE "FileDescription", "WoW Launcher for Vanilla"
 			 VALUE "InternalName", "WoW Launcher"
-			 VALUE "LegalCopyright", "Copyright © brotalnia 2015"
+			 VALUE "LegalCopyright", "Copyright © brotalnia 2017"
 			 VALUE "LegalTrademarks", ""
 			 VALUE "OriginalFilename", "WoW Launcher"
 			 VALUE "ProductName", "Realmlist Changer and WoW Launcher"

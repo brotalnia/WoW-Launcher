@@ -12,12 +12,12 @@
 #define VER_BUILD	0
 #define COMPANY_NAME	"brotalnia"
 #define FILE_VERSION	"5.0.0.0"
-#define FILE_DESCRIPTION	"WoW Launcher for Vanilla"
+#define FILE_DESCRIPTION	"WoW Launcher for TBC"
 #define INTERNAL_NAME	"WoW Launcher"
 #define LEGAL_COPYRIGHT	"Copyright © brotalnia 2017"
 #define LEGAL_TRADEMARKS	""
 #define ORIGINAL_FILENAME	"WoW Launcher"
 #define PRODUCT_NAME	"Realmlist Changer and WoW Launcher"
-#define PRODUCT_VERSION	"1.0.0.0"
+#define PRODUCT_VERSION	"2.0.0.0"
 
 #endif /*WOW_LAUNCHER_PRIVATE_H*/
