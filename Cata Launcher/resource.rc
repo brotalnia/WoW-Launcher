@@ -1,5 +1,0 @@
-#include "resource.h"
-
-IDI_MYICOB ICON "cb.ico"
-IDI_MYICOS ICON "cs.ico"
-IDI_MYICOC ICON "cogwheel.ico"

@@ -1,0 +1,24 @@
+# Project: WoW Launcher
+
+RES      = resource.o
+OBJ      = main.o $(RES)
+LINKOBJ  = main.o $(RES)
+LIBS     = -mwindows  
+BIN      = "WoW Launcher.exe"
+RM       = rm -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: launcher
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+launcher: $(OBJ)
+	gcc $(LINKOBJ) -o $(BIN) $(LIBS)
+
+main.o: main.c
+	gcc -c main.c -o main.o
+
+resource.o: resource.rc
+	windres.exe resource.rc resource.o

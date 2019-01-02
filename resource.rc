@@ -1,0 +1,64 @@
+#include <windows.h> // include for version info constants
+#include "resource.h"
+#include "version.h"
+
+#if EXPANSION == CATA
+IDI_ICON_BIG ICON "cata_big.ico"
+IDI_ICON_SMALL ICON "cata_small.ico"
+#elif EXPANSION == WOTLK
+IDI_ICON_BIG ICON "wotlk.ico"
+IDI_ICON_SMALL ICON "wotlk.ico"
+#elif EXPANSION == TBC
+IDI_ICON_BIG ICON "tbc_big.ico"
+IDI_ICON_SMALL ICON "tbc_small.ico"
+#else
+IDI_ICON_BIG ICON "vanilla_big.ico"
+IDI_ICON_SMALL ICON "vanilla_small.ico"
+#endif
+IDI_ICON_CONFIG ICON "cogwheel.ico"
+
+//
+// SUPPORT FOR WINDOWS XP THEMES:
+// THIS WILL MAKE THE PROGRAM USE THE COMMON CONTROLS
+// LIBRARY VERSION 6.0 (IF IT IS AVAILABLE)
+//
+1 24 "WoW Launcher.exe.Manifest"
+
+//
+// TO CHANGE VERSION INFORMATION, EDIT PROJECT OPTIONS...
+//
+1 VERSIONINFO
+FILEVERSION 2,0,0,0
+PRODUCTVERSION 2,0,0,0
+FILETYPE VFT_APP
+{
+  BLOCK "StringFileInfo"
+	 {
+		 BLOCK "040904E4"
+		 {
+			 VALUE "CompanyName", "brotalnia"
+			 VALUE "FileVersion", "2.0.0.0"
+#if EXPANSION == CATA
+			 VALUE "FileDescription", "WoW Launcher for Cataclysm"
+#elif EXPANSION == WOTLK
+			 VALUE "FileDescription", "WoW Launcher for WotLK"
+#elif EXPANSION == TBC
+			 VALUE "FileDescription", "WoW Launcher for TBC"
+#else
+             VALUE "FileDescription", "WoW Launcher for Vanilla"
+#endif
+			 VALUE "InternalName", "WoW Launcher"
+			 VALUE "LegalCopyright", "Copyright © brotalnia 2018"
+			 VALUE "LegalTrademarks", ""
+			 VALUE "OriginalFilename", "WoW Launcher"
+			 VALUE "ProductName", "WoW Launcher"
+			 VALUE "ProductVersion", "1.0.0.0"
+		 }
+	 }
+  BLOCK "VarFileInfo"
+	 {
+		 VALUE "Translation", 0x0409, 1252
+	 }
+}
+
+

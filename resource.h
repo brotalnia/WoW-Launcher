@@ -1,0 +1,3 @@
+#define IDI_ICON_BIG     101
+#define IDI_ICON_SMALL   201
+#define IDI_ICON_CONFIG  301
