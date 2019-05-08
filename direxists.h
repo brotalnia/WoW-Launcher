@@ -1,9 +1,7 @@
-#include <windows.h>
-
 bool DirExists(const char* dirName_in)
 {
     DWORD ftyp = GetFileAttributesA(dirName_in);
-    if (ftyp == INVALID_FILE_ATTRIBUTES)
+    if (ftyp == -1)
     {
         return false;  // something is wrong with your path!
     }

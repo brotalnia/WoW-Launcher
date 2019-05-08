@@ -3,26 +3,21 @@ typedef int bool;
 #define false 0
 
 #include "version.h"
+#include <windows.h>
+#include "resource.h"
+#include "memset.h"
 
 #if EXPANSION > VANILLA
 #include "direxists.h"
 #endif
 
-#include <dirent.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <windows.h>
-#include "resource.h"
-#include "namestrip.h"
-
-// declare windows procedures
+/* declare windows procedures */
 LRESULT CALLBACK WindowProcedure (HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK WindowProcedure2(HWND, UINT, WPARAM, LPARAM);
 
-int rboption = 6; // which radio button is currently selected
+int rboption = 6; /* which radio button is currently selected */
 
-// default servers
+/* default servers */
 #if EXPANSION == CATA
 char Server1Name[256] = "Atlantiss";
 char Server1Realm[256] = "play.atlantiss.eu";
@@ -36,9 +31,9 @@ char Server3Website[256] = "http://wowmortal.com";
 char Server4Name[256] = "WoW Circle";
 char Server4Realm[256] = "logon.wowcircle.com";
 char Server4Website[256] = "http://www.wowcircle.com";
-char Server5Name[256] = "Hades (Twinstar)";
-char Server5Realm[256] = "login.hades-wow.com";
-char Server5Website[256] = "http://www.hades-wow.com/";
+char Server5Name[256] = "Apollo (Twinstar)";
+char Server5Realm[256] = "login.apollo-wow.com";
+char Server5Website[256] = "http://www.apollo-wow.com/";
 #elif EXPANSION == WOTLK
 char Server1Name[256] = "Eternal-WoW";
 char Server1Realm[256] = "logon.eternal-wow.com";
@@ -67,7 +62,7 @@ char Server3Realm[256] = "logon.vengeancewow.com";
 char Server3Website[256] = "https://www.vengeancewow.com/";
 char Server4Name[256] = "ExcaliburWoW";
 char Server4Realm[256] = "exwow-serv.exnw.com";
-char Server4Website[256] = "http://www.excalibur-server.com/";
+char Server4Website[256] = "https://www.excalibur.ws/";
 char Server5Name[256] = "Warmane";
 char Server5Realm[256] = "logon.warmane.com";
 char Server5Website[256] = "https://www.warmane.com/";
@@ -86,25 +81,27 @@ char Server4Realm[256] = "logon.symmetrywow.com";
 char Server4Website[256] = "https://symmetrywow.com";
 char Server5Name[256] = "Lights Hope";
 char Server5Realm[256] = "logon.lightshope.org";
-char Server5Website[256] = "https://lightshope.org/";#endif
+char Server5Website[256] = "https://lightshope.org/";
+#endif
 
 char cachePath[MAX_PATH];
+char ownPath[MAX_PATH];
 
-HWND hwnd1; // handle for the main window
-HWND hwnd2; // handle for the server list window
+HWND hwnd1; /* handle for the main window */
+HWND hwnd2; /* handle for the server list window */
 
-// handles for all the different controls
+/* handles for all the different controls */
 HWND txtRealmlist, rbtnNoChange, rbtnLocalhost, rbtnServer1, rbtnServer2, rbtnServer3, rbtnServer4, rbtnServer5, rbtnSetTo, lblRealmlist, btnStart, btnOpenDirectory, btnWebsite, btnCache, btnExit, lblName1, lblName2, lblName3, lblName4, lblName5, lblRealm1, lblRealm2, lblRealm3, lblRealm4, lblRealm5, lblWebsite1, lblWebsite2, lblWebsite3, lblWebsite4, lblWebsite5, txtName1, txtName2, txtName3, txtName4, txtName5, txtRealm1, txtRealm2, txtRealm3, txtRealm4, txtRealm5, txtWebsite1, txtWebsite2, txtWebsite3, txtWebsite4, txtWebsite5, btnSave;
 
 #if EXPANSION > TBC
 HWND txtLanguage, lblLanguage;
 #endif
 
-// window class names
+/* window class names */
 char szClassName[ ] = "MainWindow";
 char szClassName2[ ] = "ServerList";
 
-// main window controls
+/* main window controls */
 #define ID_BTN_START 1
 #define ID_BTN_OPEN_DIRECTORY 2
 #define ID_BTN_WEBSITE 3
@@ -121,7 +118,7 @@ char szClassName2[ ] = "ServerList";
 #define ID_TXT_REALMLIST 14
 #define ID_LBL_REALMLIST 15
 #define ID_TXT_LANGUAGE 32
-// second window controls
+/* second window controls */
 #define ID_TXT_NAME1 16
 #define ID_TXT_NAME2 17
 #define ID_TXT_NAME3 18
@@ -139,11 +136,30 @@ char szClassName2[ ] = "ServerList";
 #define ID_TXT_WEBSITE5 30
 #define ID_BTN_SAVE 31
 
+int GetWindowShowState()
+{
+    STARTUPINFO sui;
+
+    GetStartupInfo(&sui);
+
+    return (sui.dwFlags & STARTF_USESHOWWINDOW)
+                ? sui.wShowWindow
+                : SW_SHOWDEFAULT;
+}
+
+int APIENTRY WinMainCRTStartup (void)
+{
+    int iRet;
+    iRet = WinMain(GetModuleHandle(NULL), NULL, NULL, GetWindowShowState());
+    return iRet;
+}
+
 int WINAPI WinMain (HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszArgument, int nFunsterStil)
 {
     MSG messages;            /* Here messages to the application are saved */
-    WNDCLASSEX wincl;        /* Data structure for the window class */
-
+    WNDCLASSEX wincl;        /* Data structure for the main window class */
+    WNDCLASSEX wincl2;       /* Data structure for the server list window class */
+    
     /* The Window structure */
     wincl.hInstance = hThisInstance;
     wincl.lpszClassName = szClassName;
@@ -191,10 +207,7 @@ int WINAPI WinMain (HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpsz
 
     /* Make the window visible on the screen */
     ShowWindow (hwnd1, nFunsterStil);
-    
-    /* Server List Window */
-    WNDCLASSEX wincl2;       /* Data structure for the windowclass */
-    
+
     ZeroMemory(&wincl2,sizeof(WNDCLASSEX));
     
     /* The Window structure */
@@ -219,10 +232,6 @@ int WINAPI WinMain (HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpsz
     {
         MessageBox(NULL, "Window class creation failed for window 2","Window Class Failed", MB_OK | MB_ICONERROR);
     }
-    
-    /* Set starting coordinates for the server list window to be center of screen */
-    int ScreenX = (GetSystemMetrics(SM_CXSCREEN) - 603) / 2;
-    int ScreenY = (GetSystemMetrics(SM_CYSCREEN) - 313) / 2;
 
     /* The class is registered, let's create the window*/
     hwnd2 = CreateWindowEx (
@@ -230,8 +239,8 @@ int WINAPI WinMain (HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpsz
            szClassName2,         /* Classname */
            "Server List Configuration",   /* Title Text */
            WS_OVERLAPPED | WS_SYSMENU, /* Window style */
-           ScreenX,       /* Middle of the screen */
-           ScreenY,
+           (GetSystemMetrics(SM_CXSCREEN) - 603) / 2,       /* Middle of the screen */
+           (GetSystemMetrics(SM_CYSCREEN) - 313) / 2,
            603,                 /* The programs width */
            313,                 /* and height in pixels */
            hwnd1,               /* The window is a child-window of the main window */
@@ -249,7 +258,7 @@ int WINAPI WinMain (HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpsz
     /* Run the message loop. It will run until GetMessage() returns 0 */
     while (GetMessage (&messages, NULL, 0, 0))
     {
-        if(!IsDialogMessage(hwnd2, &messages)) // allows selecting controls with tab
+        if(!IsDialogMessage(hwnd2, &messages)) /* allows selecting controls with tab */
         {
             /* Translate virtual-key messages into character messages */
             TranslateMessage(&messages);
@@ -264,202 +273,271 @@ int WINAPI WinMain (HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpsz
 
 void WriteRealmlist(const char* realm)
 {
+    HANDLE hFile;
+    char realmFinal[256] = "set realmlist ";
+    /* realmlist file is in the Data\<locale>\ folder in wotlk */
 #if EXPANSION > TBC
     char realmPath[MAX_PATH] = "Data\\";
     char locale[5];
     GetDlgItemText(hwnd1, ID_TXT_LANGUAGE, locale, 5);
-    strcat(realmPath, locale);
-    strcat(realmPath, "\\realmlist.wtf");
+    lstrcat(realmPath, locale);
+    lstrcat(realmPath, "\\realmlist.wtf");
 #else
     char realmPath[MAX_PATH] = "realmlist.wtf";
 #endif
 
     SetFileAttributes(realmPath, FILE_ATTRIBUTE_NORMAL);
-    char realmFinal[256] = "set realmlist ";
-    strcat(realmFinal, realm);
+    lstrcat(realmFinal, realm);
+    
+    /* need to set patch list for cataclysm */
 #if EXPANSION > WOTLK
-    strcat(realmFinal, "\nset patchlist ");
-    strcat(realmFinal, realm);
+    lstrcat(realmFinal, "\r\nset patchlist ");
+    lstrcat(realmFinal, realm);
 #endif
-    FILE *fp = fopen(realmPath, "w");
-    if (fp)
+    
+    hFile = CreateFile(realmPath, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (hFile != INVALID_HANDLE_VALUE)
     {
-        fputs(realmFinal, fp);
-        fclose(fp);
+        long unsigned int bytesWritten = 0;
+        WriteFile(hFile, realmFinal, lstrlen(realmFinal), &bytesWritten, NULL);
+        CloseHandle(hFile);        
     }
 }
 
-void strncpy_null(char* s1, const char* s2, size_t n)
+const char* FindSubString(const char* src, const char* sub)
 {
-    strncpy(s1, s2, n);
-    s1[n] = '\0';
+    int i;
+    
+	if (*sub == '\0')
+		return src;
+    
+	for (i = 0; i < lstrlen(src); i++)
+	{
+		if (*(src + i) == *sub) 
+		{
+			const char* ptr = FindSubString(src + i + 1, sub + 1);
+			return (ptr) ? ptr - 1 : 0;
+		}
+	}
+
+	return 0;
+}
+
+int ReadTextLine(char* data, int dataSize, char* line)
+{
+    int i;
+    for (i = 0; i < dataSize; i++)
+    {
+        if (data[i] == '\r' || data[i] == '\n' || data[i] == '\0')
+        {
+            line[i] = '\0';
+            return i+1;
+        }
+        line[i] = data[i];
+    }
+    return i;
 }
 
 void ReadServersList(const char* fileName)
 {
-    FILE * fp = fopen(fileName, "r");
-    if(fp)
+    char data[512];
+    char line[512];
+    DWORD position = 0;
+    DWORD fileSize = -1;
+    
+    HANDLE hFile = CreateFile(fileName, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    if(hFile == INVALID_HANDLE_VALUE)
+        return;
+    
+    if(!ReadFile(hFile, (LPVOID*)&data, 512, &fileSize, NULL))
+        return;
+    
+    if (fileSize <= 0)
     {
-        // check if file is empty to prevent crash on getline
-        fseek (fp, 0, SEEK_END);
-        if (ftell(fp) == 0)
-            return;
-        
-        // go back to beginning
-        fseek (fp, 0, SEEK_SET);
-        
-        char* line = NULL;
-        size_t len = 0;
-        ssize_t n_read = 0;
-        while((n_read = getline(&line,&len,fp)) != -1)
-        {
-            if (n_read == 0)
-                continue;
-            
-            if (line[n_read-1] == '\n')
-                line[n_read-1] = '\0';
-            
-            if(strstr(line, "Server1Name"))
-            {
-                strncpy_null(Server1Name, line+12, n_read-12);
-            }
-            else if (strstr(line, "Server1Realm"))
-            {
-                strncpy_null(Server1Realm, line+13, n_read-13);
-            }
-            else if (strstr(line, "Server1Website"))
-            {
-                strncpy_null(Server1Website, line+15, n_read-15);
-            }
-            else if(strstr(line, "Server2Name"))
-            {
-                strncpy_null(Server2Name, line+12, n_read-12);
-            }
-            else if (strstr(line, "Server2Realm"))
-            {
-                strncpy_null(Server2Realm, line+13, n_read-13);
-            }
-            else if (strstr(line, "Server2Website"))
-            {
-                strncpy_null(Server2Website, line+15, n_read-15);
-            }
-            else if(strstr(line, "Server3Name"))
-            {
-                strncpy_null(Server3Name, line+12, n_read-12);
-            }
-            else if (strstr(line, "Server3Realm"))
-            {
-                strncpy_null(Server3Realm, line+13, n_read-13);
-            }
-            else if (strstr(line, "Server3Website"))
-            {
-                strncpy_null(Server3Website, line+15, n_read-15);
-            }
-            else if(strstr(line, "Server4Name"))
-            {
-                strncpy_null(Server4Name, line+12, n_read-12);
-            }
-            else if (strstr(line, "Server4Realm"))
-            {
-                strncpy_null(Server4Realm, line+13, n_read-13);
-            }
-            else if (strstr(line, "Server4Website"))
-            {
-                strncpy_null(Server4Website, line+15, n_read-15);
-            }
-            else if(strstr(line, "Server5Name"))
-            {
-                strncpy_null(Server5Name, line+12, n_read-12);
-            }
-            else if (strstr(line, "Server5Realm"))
-            {
-                strncpy_null(Server5Realm, line+13, n_read-13);
-            }
-            else if (strstr(line, "Server5Website"))
-            {
-                strncpy_null(Server5Website, line+15, n_read-15);
-            }
-        }
-        free(line);
-        fclose(fp);
+        CloseHandle(hFile);
+        return;
     }
+    
+    if (data[fileSize] != '\0')
+        data[fileSize] = '\0';
+    
+    while (position < fileSize)
+    {
+        int lineSize = ReadTextLine(data + position, fileSize - position, line);
+        position += lineSize;
+        
+        if (lineSize == 0)
+            break;
+
+        if(FindSubString(line, "Server1Name"))
+        {
+            lstrcpyn(Server1Name, line+12, lineSize-12);
+        }
+        else if (FindSubString(line, "Server1Realm"))
+        {
+            lstrcpyn(Server1Realm, line+13, lineSize-13);
+        }
+        else if (FindSubString(line, "Server1Website"))
+        {
+            lstrcpyn(Server1Website, line+15, lineSize-15);
+        }
+        else if(FindSubString(line, "Server2Name"))
+        {
+            lstrcpyn(Server2Name, line+12, lineSize-12);
+        }
+        else if (FindSubString(line, "Server2Realm"))
+        {
+            lstrcpyn(Server2Realm, line+13, lineSize-13);
+        }
+        else if (FindSubString(line, "Server2Website"))
+        {
+            lstrcpyn(Server2Website, line+15, lineSize-15);
+        }
+        else if(FindSubString(line, "Server3Name"))
+        {
+            lstrcpyn(Server3Name, line+12, lineSize-12);
+        }
+        else if (FindSubString(line, "Server3Realm"))
+        {
+            lstrcpyn(Server3Realm, line+13, lineSize-13);
+        }
+        else if (FindSubString(line, "Server3Website"))
+        {
+            lstrcpyn(Server3Website, line+15, lineSize-15);
+        }
+        else if(FindSubString(line, "Server4Name"))
+        {
+            lstrcpyn(Server4Name, line+12, lineSize-12);
+        }
+        else if (FindSubString(line, "Server4Realm"))
+        {
+            lstrcpyn(Server4Realm, line+13, lineSize-13);
+        }
+        else if (FindSubString(line, "Server4Website"))
+        {
+            lstrcpyn(Server4Website, line+15, lineSize-15);
+        }
+        else if(FindSubString(line, "Server5Name"))
+        {
+            lstrcpyn(Server5Name, line+12, lineSize-12);
+        }
+        else if (FindSubString(line, "Server5Realm"))
+        {
+            lstrcpyn(Server5Realm, line+13, lineSize-13);
+        }
+        else if (FindSubString(line, "Server5Website"))
+        {
+            lstrcpyn(Server5Website, line+15, lineSize-14);
+        }
+    }
+   CloseHandle(hFile);
 }
 
 void WriteServersList(const char* fileName)
 {
+    HANDLE hFile;
     char configData[1024];
-    sprintf(configData, "Server1Name=%s\nServer1Realm=%s\nServer1Website=%s\nServer2Name=%s\nServer2Realm=%s\nServer2Website=%s\nServer3Name=%s\nServer3Realm=%s\nServer3Website=%s\nServer4Name=%s\nServer4Realm=%s\nServer4Website=%s\nServer5Name=%s\nServer5Realm=%s\nServer5Website=%s", Server1Name, Server1Realm, Server1Website, Server2Name, Server2Realm, Server2Website, Server3Name, Server3Realm, Server3Website, Server4Name, Server4Realm, Server4Website, Server5Name, Server5Realm, Server5Website);
-    FILE *fp = fopen(fileName, "w");
-    if (fp)
+    lstrcpy(configData, "Server1Name=");
+    lstrcat(configData, Server1Name);
+    lstrcat(configData, "\r\nServer1Realm=");
+    lstrcat(configData, Server1Realm);
+    lstrcat(configData, "\r\nServer1Website=");
+    lstrcat(configData, Server1Website);
+    lstrcat(configData, "\r\nServer2Name=");
+    lstrcat(configData, Server2Name);
+    lstrcat(configData, "\r\nServer2Realm=");
+    lstrcat(configData, Server2Realm);
+    lstrcat(configData, "\r\nServer2Website=");
+    lstrcat(configData, Server2Website);
+    lstrcat(configData, "\r\nServer3Name=");
+    lstrcat(configData, Server3Name);
+    lstrcat(configData, "\r\nServer3Realm=");
+    lstrcat(configData, Server3Realm);
+    lstrcat(configData, "\r\nServer3Website=");
+    lstrcat(configData, Server3Website);
+    lstrcat(configData, "\r\nServer4Name=");
+    lstrcat(configData, Server4Name);
+    lstrcat(configData, "\r\nServer4Realm=");
+    lstrcat(configData, Server4Realm);
+    lstrcat(configData, "\r\nServer4Website=");
+    lstrcat(configData, Server4Website);
+    lstrcat(configData, "\r\nServer5Name=");
+    lstrcat(configData, Server5Name);
+    lstrcat(configData, "\r\nServer5Realm=");
+    lstrcat(configData, Server5Realm);
+    lstrcat(configData, "\r\nServer5Website=");
+    lstrcat(configData, Server5Website);
+    
+    hFile = CreateFile(fileName, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (hFile != INVALID_HANDLE_VALUE)
     {
-        fputs(configData, fp);
-        fclose(fp);
+        long unsigned int bytesWritten = 0;
+        WriteFile(hFile, configData, lstrlen(configData), &bytesWritten, NULL);
+        CloseHandle(hFile);        
     }
-}
+}
+
 #if EXPANSION > VANILLA
 const char* GetLocale()
 {
-    char ownPath[MAX_PATH];
-    GetModuleFileName(GetModuleHandle(NULL), ownPath, (sizeof(ownPath))); 
-    path_strip_filename(ownPath);
-    
     char realmDir[MAX_PATH];
-    strcpy(realmDir, ownPath);
-    strcat(realmDir,"\\Data\\enGB");
+    
+    lstrcpy(realmDir, ownPath);
+    lstrcat(realmDir,"\\Data\\enGB");
     if (DirExists(realmDir))
     {
         return "enGB";
     }
-    strcpy(realmDir, ownPath);
-    strcat(realmDir,"\\Data\\enUS");
+    lstrcpy(realmDir, ownPath);
+    lstrcat(realmDir,"\\Data\\enUS");
     if (DirExists(realmDir))
     {
         return "enUS";
     }
-    strcpy(realmDir, ownPath);
-    strcat(realmDir,"\\Data\\esES");
+    lstrcpy(realmDir, ownPath);
+    lstrcat(realmDir,"\\Data\\esES");
     if (DirExists(realmDir))
     {
         return "esES";
     }
-    strcpy(realmDir, ownPath);
-    strcat(realmDir,"\\Data\\esMX");
+    lstrcpy(realmDir, ownPath);
+    lstrcat(realmDir,"\\Data\\esMX");
     if (DirExists(realmDir))
     {
         return "esMX";
     }
-    strcpy(realmDir, ownPath);
-    strcat(realmDir,"\\Data\\ruRU");
+    lstrcpy(realmDir, ownPath);
+    lstrcat(realmDir,"\\Data\\ruRU");
     if (DirExists(realmDir))
     {
         return "ruRU";
     }
-    strcpy(realmDir, ownPath);
-    strcat(realmDir,"\\Data\\frFR");
+    lstrcpy(realmDir, ownPath);
+    lstrcat(realmDir,"\\Data\\frFR");
     if (DirExists(realmDir))
     {
         return "frFR";
     }
-    strcpy(realmDir, ownPath);
-    strcat(realmDir,"\\Data\\deDE");
+    lstrcpy(realmDir, ownPath);
+    lstrcat(realmDir,"\\Data\\deDE");
     if (DirExists(realmDir))
     {
         return "deDE";
     }
-    strcpy(realmDir, ownPath);
-    strcat(realmDir,"\\Data\\zhCN");
+    lstrcpy(realmDir, ownPath);
+    lstrcat(realmDir,"\\Data\\zhCN");
     if (DirExists(realmDir))
     {
         return "zhCN";
     }
-    strcpy(realmDir, ownPath);
-    strcat(realmDir,"\\Data\\zhTW");
+    lstrcpy(realmDir, ownPath);
+    lstrcat(realmDir,"\\Data\\zhTW");
     if (DirExists(realmDir))
     {
         return "zhTW";
     }
-    strcpy(realmDir, ownPath);
-    strcat(realmDir,"\\Data\\koKR");
+    lstrcpy(realmDir, ownPath);
+    lstrcat(realmDir,"\\Data\\koKR");
     if (DirExists(realmDir))
     {
         return "koKR";
@@ -470,72 +548,115 @@ const char* GetLocale()
 }
 #endif
 
-char const* FindCacheDir()
+void FindCacheDir(void)
 {
-    char ownPath[MAX_PATH];
-    GetModuleFileName(GetModuleHandle(NULL), ownPath, (sizeof(ownPath))); 
-    path_strip_filename(ownPath);
-    strcpy(cachePath, ownPath);
-    
-#if EXPANSION > VANILLA // cache directory is localized in tbc
-    strcat(cachePath, "\\Cache\\WDB\\");
-    
-#if EXPANSION > TBC // for wotlk and newer take locale from text box
+#if EXPANSION > TBC
     char locale[5];
-    GetDlgItemText(hwnd1, ID_TXT_LANGUAGE, locale, 5);
-    strcat(cachePath, locale);
-#else
-    strcat(cachePath, GetLocale());
 #endif
-
+    lstrcpy(cachePath, ownPath);
+#if EXPANSION == VANILLA
+    lstrcat(cachePath, "\\WDB");
+#elif EXPANSION == TBC
+    /* cache directory is localized in tbc */
+    lstrcat(cachePath, "\\Cache\\WDB\\");
+    lstrcat(cachePath, GetLocale()); 
 #else
-    strcat(cachePath, "\\WDB");
+    /* take locale from text box for wotlk or newer */
+    lstrcat(cachePath, "\\Cache\\WDB\\");
+    GetDlgItemText(hwnd1, ID_TXT_LANGUAGE, locale, 5);
+    lstrcat(cachePath, locale);
 #endif
 }
 
-void ClearCache()
+void ClearCache(void)
 {
-    FindCacheDir();
-    DIR *cacheFolder = opendir(cachePath);
-    struct dirent *next_file;
+    HANDLE hFind;
+    WIN32_FIND_DATA data;
     char filePath[MAX_PATH];
-
-    // reading all files in folder
-    while ((next_file = readdir(cacheFolder)) != NULL)
+    char cacheSearchString[MAX_PATH];
+    
+#if EXPANSION > TBC
+    FindCacheDir();
+#endif
+    
+    lstrcpy(cacheSearchString, cachePath);
+    lstrcat(cacheSearchString, "\\");
+    lstrcat(cacheSearchString, "*.wdb");
+    
+    hFind = FindFirstFile(cacheSearchString, &data);
+    if (hFind != INVALID_HANDLE_VALUE)
     {
-        // check if it is a wdb file
-        if (strstr(next_file->d_name, ".wdb"))
+        do
         {
-            // build the path for each file in the folder
-            sprintf(filePath, "%s\\%s", cachePath, next_file->d_name);
-            remove(filePath);
-        }
+            /* build the path for each file in the folder */
+            lstrcpy(filePath, cachePath);
+            lstrcat(filePath, "\\");
+            lstrcat(filePath, data.cFileName);
+            DeleteFile(filePath);
+        } while (FindNextFile(hFind, &data));
+        FindClose(hFind);
     }
-    closedir(cacheFolder);
 }
 
 void SetSelectedServer(int rbtn_id)
 {
     if(IsDlgButtonChecked(hwnd1, rbtn_id) == BST_CHECKED)
     {
-        EnableWindow(txtRealmlist, FALSE); // disable textbox next to Set To radio button if it is not selected
-        rboption = rbtn_id; // storing selected server
+        /* disable textbox next to Set To radio button if it is not selected */
+        EnableWindow(txtRealmlist, FALSE);
+        rboption = rbtn_id;
     }
 }
 
-static HBRUSH hbrBkgnd = NULL; // used for the label colors
-HFONT hFont = NULL; // used for the label fonts
+void StartGame(HWND hwnd)
+{
+    int success;
+    bool retry;
+    Sleep(500);
+    if (GetModuleHandle(NULL) != NULL)
+    {
+        do
+        {
+            retry = false;
+            success = (int) ShellExecute(hwnd, "open", "Wow.exe", NULL, NULL, SW_SHOWDEFAULT);
+            if (success < 32) /* check if game has launched successfully */
+            {
+                if (MessageBox(hwnd, "Unable to launch World of Warcraft.", "WoW Launcher", MB_RETRYCANCEL | MB_DEFBUTTON2 | MB_ICONERROR) == IDRETRY)
+                    retry = true;
+            }
+            else
+            {
+                ExitProcess(0); /* close program once game has launched */
+            }
+        } while (retry);
+    }
+}
+
+HBRUSH hbrBkgnd = NULL; /* used for the label colors */
+HFONT hFont = NULL; /* used for the label fonts */
+HPEN hPenOld;
+HPEN hLinePen;
+COLORREF qLineColor;
 
 /*  This function is called by the Windows function DispatchMessage()  */
 LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     PAINTSTRUCT ps;
     HDC hdc;
+    HINSTANCE hInstance;
     switch (message)                  /* handle the messages */
     {
         case WM_CREATE:
         {
-            // creating labels and setting their font
+            /* find current working directory */
+            GetCurrentDirectory((sizeof(ownPath)), &ownPath);
+            
+            /* find cache directory now for tbc and vanilla */
+            #if EXPANSION < WOTLK
+            FindCacheDir();
+            #endif
+    
+            /* creating labels and setting their font */
             lblRealmlist = CreateWindow ("STATIC", " Realmlist:", WS_VISIBLE | WS_CHILD | SS_NOTIFY, 5, 3, 84, 20, hwnd, (HMENU) ID_LBL_REALMLIST, NULL, NULL);
             hFont=CreateFont (20, 0, 0, 0, 700, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, "Microsoft Sans Serif");
             SendMessage (lblRealmlist, WM_SETFONT, (WPARAM)hFont, TRUE);
@@ -545,7 +666,7 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
             SendMessage (lblLanguage, WM_SETFONT, (WPARAM)hFont, TRUE);
             #endif
             
-            // creating the buttons and setting their font
+            /* creating the buttons and setting their font */
             btnStart = CreateWindow ("BUTTON", "Start", WS_VISIBLE |WS_CHILD, 243, 12, 100, 28, hwnd, (HMENU) ID_BTN_START, NULL, NULL);
             SendMessage(btnStart,WM_SETFONT,(WPARAM)GetStockObject(DEFAULT_GUI_FONT),MAKELPARAM(1,0));
             btnOpenDirectory = CreateWindow ("BUTTON", "Open Directory", WS_VISIBLE |WS_CHILD, 243, 46, 100, 28, hwnd, (HMENU) ID_BTN_OPEN_DIRECTORY, NULL, NULL);
@@ -557,11 +678,11 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
             btnExit = CreateWindow ("BUTTON", "Exit", WS_VISIBLE |WS_CHILD, 243, 148, 100, 28, hwnd, (HMENU) ID_BTN_EXIT, NULL, NULL);
             SendMessage(btnExit,WM_SETFONT,(WPARAM)GetStockObject(DEFAULT_GUI_FONT),MAKELPARAM(1,0));
             
-            // load saved servers list
+            /* load saved servers list */
             ReadServersList("launcher.cfg");
             
-            // creating the radio buttons and setting their font
-            HINSTANCE hInstance = (HINSTANCE)GetWindowLong(hwnd, GWL_HINSTANCE);
+            /* creating the radio buttons and setting their font */
+            hInstance = (HINSTANCE)GetWindowLong(hwnd, GWL_HINSTANCE);
             rbtnNoChange = CreateWindowEx(0,  "BUTTON",  "No Change",  WS_VISIBLE | WS_CHILD | BS_AUTORADIOBUTTON,  12, 31,   140,  17,  hwnd,  (HMENU) ID_RBTN_NO_CHANGE,  hInstance,  NULL);
             SendMessage(rbtnNoChange,WM_SETFONT,(WPARAM)GetStockObject(DEFAULT_GUI_FONT),MAKELPARAM(1,0));
             SendDlgItemMessage(hwnd, ID_RBTN_NO_CHANGE, BM_SETCHECK, 1, 0);
@@ -580,10 +701,10 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
             rbtnSetTo = CreateWindowEx(0,  "BUTTON",  "Set to:",  WS_VISIBLE | WS_CHILD | BS_AUTORADIOBUTTON,  12, 195,   52,  17,  hwnd,  (HMENU) ID_RBTN_SET_TO,  hInstance,  NULL);
             SendMessage(rbtnSetTo,WM_SETFONT,(WPARAM)GetStockObject(DEFAULT_GUI_FONT),MAKELPARAM(1,0));
             
-            // creating textboxes
+            /* creating textboxes */
             txtRealmlist = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("Edit"), TEXT(""), WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL, 65, 192, 130, 20, hwnd, (HMENU) ID_TXT_REALMLIST, NULL, NULL);
             SendMessage(txtRealmlist,WM_SETFONT,(WPARAM)GetStockObject(DEFAULT_GUI_FONT),MAKELPARAM(1,0));
-            EnableWindow(txtRealmlist, FALSE); // Set To textbox is disabled by default
+            EnableWindow(txtRealmlist, FALSE);
             #if EXPANSION > TBC
             txtLanguage = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("Edit"), TEXT(GetLocale()), WS_CHILD | WS_VISIBLE, 274, 192, 92, 20, hwnd, (HMENU) ID_TXT_LANGUAGE, NULL, NULL);
             SendMessage(txtLanguage,WM_SETFONT,(WPARAM)GetStockObject(DEFAULT_GUI_FONT),MAKELPARAM(1,0));
@@ -595,143 +716,100 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
         {
             switch (LOWORD(wParam))
             {
-                case ID_BTN_START: // start button
+                case ID_BTN_START: /* start button */
                 {
-                    switch (rboption) // check which radio button is selected
+                    switch (rboption) /* check which radio button is selected */
                     {
                         case ID_RBTN_NO_CHANGE:
-                            // no change
                             break;
                         case ID_RBTN_LOCALHOST:
                         {
-                            // localhost
                             WriteRealmlist("127.0.0.1\n");
                             break;
                         }
                         case ID_RBTN_SERVER1:
                         {
-                            // server1
                             WriteRealmlist(Server1Realm);
                             break;
                         }
                         case ID_RBTN_SERVER2:
                         {
-                            // server2
                             WriteRealmlist(Server2Realm);
                             break;
                         }
                         case ID_RBTN_SERVER3:
                         {
-                            // server3
                             WriteRealmlist(Server3Realm);
                             break;
                         }
                         case ID_RBTN_SERVER4:
                         {
-                            // server4
                             WriteRealmlist(Server4Realm);
                             break;
                         }
                         case ID_RBTN_SERVER5:
                         {
-                            // server5
                             WriteRealmlist(Server5Realm);
                             break;
                         }
                         case ID_RBTN_SET_TO:
                         {
-                            // set to
                             char realmlist[256];
                             GetDlgItemText(hwnd, ID_TXT_REALMLIST, realmlist, 256);
                             WriteRealmlist(realmlist);
                             break;
                         }
                     }
-                    Sleep(1000);
-                    char ownPath[MAX_PATH]; 
-                    if (GetModuleHandle(NULL) != NULL)
-                    {
-                        // When passing NULL to GetModuleHandle, it returns handle of exe itself
-                        GetModuleFileName(GetModuleHandle(NULL), ownPath, (sizeof(ownPath))); 
-                        path_strip_filename(ownPath);
-                        strcat(ownPath,"\\Wow.exe");
-                        bool retry = false;
-                        do
-                        {
-                            retry = false;
-                            int success = (int) ShellExecute(hwnd, "open", ownPath, NULL, NULL, SW_SHOWDEFAULT);
-                            if (success < 32) // check if game has launched successfully
-                            {
-                                if (MessageBox(hwnd, "Unable to launch World of Warcraft.", "WoW Launcher", MB_RETRYCANCEL | MB_DEFBUTTON2 | MB_ICONERROR) == 4)
-                                    retry = true;
-                            }
-                            else
-                            {
-                                exit(0); // close program once game has launched
-                            }
-                        } while (retry);
-                    }
+                    StartGame(hwnd);
                     break;
                 }
-                case ID_BTN_OPEN_DIRECTORY: // open directory button
+                case ID_BTN_OPEN_DIRECTORY: /* open directory button */
                 {
-                    char ownPath[MAX_PATH]; 
                     if (GetModuleHandle(NULL) != NULL)
-                    {
-                        // When passing NULL to GetModuleHandle, it returns handle of exe itself
-                        GetModuleFileName(GetModuleHandle(NULL), ownPath, (sizeof(ownPath))); 
-                        path_strip_filename(ownPath);
                         ShellExecute(NULL, "open", ownPath, NULL, NULL, SW_SHOWDEFAULT);
-                    }
                     break;
                 }
-                case ID_BTN_WEBSITE: // website button
+                case ID_BTN_WEBSITE: /* website button */
                 {
                     switch (rboption)
                     {
                         case ID_RBTN_LOCALHOST:
-                            // localhost
                             ShellExecute(NULL, "open", "http://127.0.0.1", NULL, NULL, SW_SHOWDEFAULT);
                             break;
                         case ID_RBTN_SERVER1:
-                            // server1
                             ShellExecute(NULL, "open", Server1Website, NULL, NULL, SW_SHOWDEFAULT);
                             break;
                         case ID_RBTN_SERVER2:
-                            // server2
                             ShellExecute(NULL, "open", Server2Website, NULL, NULL, SW_SHOWDEFAULT);
                             break;
                         case ID_RBTN_SERVER3:
-                            // server3
                             ShellExecute(NULL, "open", Server3Website, NULL, NULL, SW_SHOWDEFAULT);
                             break;
                         case ID_RBTN_SERVER4:
-                            // server4
                             ShellExecute(NULL, "open", Server4Website, NULL, NULL, SW_SHOWDEFAULT);
                             break;
                         case ID_RBTN_SERVER5:
-                            // server5
                             ShellExecute(NULL, "open", Server5Website, NULL, NULL, SW_SHOWDEFAULT);
                             break;
                         default:
-                            // no change or set to
+                            /* no change or set to */
                             MessageBox(hwnd, "Select a server to view its website.","WoW Launcher", MB_OK | MB_DEFBUTTON1 | MB_ICONINFORMATION);
                             break;
                     }
                     break;
                 }
-                case ID_BTN_CACHE: // clear cache button
+                case ID_BTN_CACHE: /* clear cache button */
                 {
                     if (MessageBox(hwnd, "Do you want to delete the cache?", "WoW Launcher", MB_YESNO | MB_DEFBUTTON1 | MB_ICONQUESTION)==IDYES)
                         ClearCache();
                     break;
                 }
-                case ID_BTN_EXIT: // exit button
+                case ID_BTN_EXIT: /* exit button */
                 {
-                    exit(0);
+                    ExitProcess(0);
                     break;
                 }
-                case ID_RBTN_NO_CHANGE: // no change radio button
+                case ID_RBTN_NO_CHANGE: /* no change radio button */
                 {
                     switch (HIWORD(wParam))
                     {
@@ -743,7 +821,7 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
                     }
                     break;
                 }
-                case ID_RBTN_LOCALHOST: // localhost radio button
+                case ID_RBTN_LOCALHOST: /* localhost radio button */
                 {
                     switch (HIWORD(wParam))
                     {
@@ -755,7 +833,7 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
                     }
                     break;
                 }
-                case ID_RBTN_SERVER1: // server1 radio button
+                case ID_RBTN_SERVER1: /* server1 radio button */
                 {
                     switch (HIWORD(wParam))
                     {
@@ -767,7 +845,7 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
                     }
                     break;
                 }
-                case ID_RBTN_SERVER2: // server2 radio button
+                case ID_RBTN_SERVER2: /* server2 radio button */
                 {
                     switch (HIWORD(wParam))
                     {
@@ -779,7 +857,7 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
                     }
                     break;
                 }
-                case ID_RBTN_SERVER3: // server3 radio button
+                case ID_RBTN_SERVER3: /* server3 radio button */
                 {
                     switch (HIWORD(wParam))
                     {
@@ -791,7 +869,7 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
                     }
                     break;
                 }
-                case ID_RBTN_SERVER4: // server4 radio button
+                case ID_RBTN_SERVER4: /* server4 radio button */
                 {
                     switch (HIWORD(wParam))
                     {
@@ -803,7 +881,7 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
                     }
                     break;
                 }
-                case ID_RBTN_SERVER5: // server5 radio button
+                case ID_RBTN_SERVER5: /* server5 radio button */
                 {
                     switch (HIWORD(wParam))
                     {
@@ -815,7 +893,7 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
                     }
                     break;
                 }
-                case ID_RBTN_SET_TO: // set to radio button
+                case ID_RBTN_SET_TO: /* set to radio button */
                 {
                     switch (HIWORD(wParam))
                     {
@@ -823,20 +901,20 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
                         {
                             if(IsDlgButtonChecked(hwnd, ID_RBTN_SET_TO) == BST_CHECKED)
                             {
-                                EnableWindow(txtRealmlist, TRUE); // enable the textbox
-                                rboption = ID_RBTN_SET_TO; // storing selected server
+                                EnableWindow(txtRealmlist, TRUE); /* enable the textbox */
+                                rboption = ID_RBTN_SET_TO; /* storing selected server */
                             }
                             break;
                         }
                     }
                     break;
                 }
-                case ID_LBL_REALMLIST: // realmlist label
+                case ID_LBL_REALMLIST: /* realmlist label */
                 {
-                    // check for double click
+                    /* check for double click */
                     if(HIWORD(wParam)==STN_DBLCLK)
                     {
-                        // show the server list window
+                        /* show the server list window */
                         ShowWindow(hwnd2,SW_SHOWNORMAL);
                         EnableWindow(hwnd1, false);
                     }
@@ -844,10 +922,10 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
                 }
             }
             break;
-        } // end of case WM_COMMAND
+        } /* end of case WM_COMMAND */
         case WM_CTLCOLORSTATIC:
         {
-            // setting the label colors
+            /* setting the label colors */
             HDC hdcStatic = (HDC) wParam;
             SetTextColor(hdcStatic, RGB(0,0,0));
             SetBkColor(hdcStatic, RGB(236, 233, 216));
@@ -862,11 +940,7 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
         {
             hdc = BeginPaint(hwnd, &ps);
 
-            HPEN hPenOld;
-
-            // Drawing the black separator line in the middle
-            HPEN hLinePen;
-            COLORREF qLineColor;
+            /* Drawing the black separator line in the middle */
             qLineColor = RGB(0, 0, 0);
             hLinePen = CreatePen(PS_SOLID, 5, qLineColor);
             hPenOld = (HPEN)SelectObject(hdc, hLinePen);
@@ -893,7 +967,7 @@ LRESULT CALLBACK WindowProcedure2(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam
     {
         case WM_CREATE:
         {
-            // creating labels
+            /* creating labels */
             hFont=CreateFont (14, 0, 0, 0, FW_DONTCARE, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, "Microsoft Sans Serif");
             lblName1 = CreateWindow ("STATIC", "Name 1", WS_VISIBLE | WS_CHILD, 15, 10, 70, 13, hwnd, NULL, NULL, NULL);
             SendMessage (lblName1, WM_SETFONT, (WPARAM) hFont, TRUE);
@@ -926,7 +1000,7 @@ LRESULT CALLBACK WindowProcedure2(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam
             lblWebsite5 = CreateWindow ("STATIC", "Website 5", WS_VISIBLE | WS_CHILD, 377, 190, 70, 13, hwnd, NULL, NULL, NULL);
             SendMessage (lblWebsite5, WM_SETFONT, (WPARAM) hFont, TRUE);
             
-            // creating textboxes
+            /* creating textboxes */
             txtName1 = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("Edit"), TEXT(Server1Name), WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_AUTOHSCROLL, 12, 28, 120, 20, hwnd, (HMENU) ID_TXT_NAME1, NULL, NULL);
             SendMessage(txtName1,WM_SETFONT,(WPARAM)GetStockObject(DEFAULT_GUI_FONT),MAKELPARAM(1,0));
             txtName2 = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("Edit"), TEXT(Server2Name), WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_AUTOHSCROLL, 12, 73, 120, 20, hwnd, (HMENU) ID_TXT_NAME2, NULL, NULL);
@@ -958,7 +1032,7 @@ LRESULT CALLBACK WindowProcedure2(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam
             txtWebsite5 = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("Edit"), TEXT(Server5Website), WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_AUTOHSCROLL, 374, 208, 210, 20, hwnd, (HMENU) ID_TXT_WEBSITE5, NULL, NULL);
             SendMessage(txtWebsite5,WM_SETFONT,(WPARAM)GetStockObject(DEFAULT_GUI_FONT),MAKELPARAM(1,0));
             
-            // creating buttons
+            /* creating buttons */
             btnSave = CreateWindow ("BUTTON", "Save", WS_VISIBLE |WS_CHILD, 490, 240, 94, 30, hwnd, (HMENU) ID_BTN_SAVE, NULL, NULL);
             SendMessage(btnSave,WM_SETFONT,(WPARAM)GetStockObject(DEFAULT_GUI_FONT),MAKELPARAM(1,0));
             
@@ -968,9 +1042,9 @@ LRESULT CALLBACK WindowProcedure2(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam
         {
             switch (LOWORD(wParam))
             {
-                case ID_BTN_SAVE: // save button
+                case ID_BTN_SAVE: /* save button */
                 {
-                    // get new server data
+                    /* get new server data */
                     GetDlgItemText(hwnd, ID_TXT_NAME1, Server1Name, 256);
                     GetDlgItemText(hwnd, ID_TXT_NAME2, Server2Name, 256);
                     GetDlgItemText(hwnd, ID_TXT_NAME3, Server3Name, 256);
@@ -986,15 +1060,15 @@ LRESULT CALLBACK WindowProcedure2(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam
                     GetDlgItemText(hwnd, ID_TXT_WEBSITE3, Server3Website, 256);
                     GetDlgItemText(hwnd, ID_TXT_WEBSITE4, Server4Website, 256);
                     GetDlgItemText(hwnd, ID_TXT_WEBSITE5, Server5Website, 256);
-                    // update names on main window
+                    /* update names on main window */
                     SetDlgItemText(hwnd1, ID_RBTN_SERVER1, Server1Name);
                     SetDlgItemText(hwnd1, ID_RBTN_SERVER2, Server2Name);
                     SetDlgItemText(hwnd1, ID_RBTN_SERVER3, Server3Name);
                     SetDlgItemText(hwnd1, ID_RBTN_SERVER4, Server4Name);
                     SetDlgItemText(hwnd1, ID_RBTN_SERVER5, Server5Name);
-                    // saving to file
+                    /* saving to file */
                     WriteServersList("launcher.cfg");
-                    // hide the configuration window
+                    /* hide the configuration window */
                     ShowWindow(hwnd,SW_HIDE);
                     EnableWindow(hwnd1, true);
                     SetForegroundWindow(hwnd1);
@@ -1006,7 +1080,7 @@ LRESULT CALLBACK WindowProcedure2(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam
         }
         case WM_CTLCOLORSTATIC:
         {
-            // setting the label colors
+            /* setting the label colors */
             HDC hdcStatic = (HDC) wParam;
             SetTextColor(hdcStatic, RGB(0,0,0));
             SetBkColor(hdcStatic, RGB(236, 233, 216));
@@ -1019,7 +1093,7 @@ LRESULT CALLBACK WindowProcedure2(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam
         }
         case WM_CLOSE:
         {
-            // hide window when pressing close button instead of closing it
+            /* hide window when pressing close button instead of closing it */
             ShowWindow(hwnd,SW_HIDE);
             EnableWindow(hwnd1, true);
             SetForegroundWindow(hwnd1);

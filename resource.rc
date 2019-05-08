@@ -3,19 +3,19 @@
 #include "version.h"
 
 #if EXPANSION == CATA
-IDI_ICON_BIG ICON "cata_big.ico"
-IDI_ICON_SMALL ICON "cata_small.ico"
+IDI_ICON_BIG ICON "icons\\cata_big.ico"
+IDI_ICON_SMALL ICON "icons\\cata_small.ico"
 #elif EXPANSION == WOTLK
-IDI_ICON_BIG ICON "wotlk.ico"
-IDI_ICON_SMALL ICON "wotlk.ico"
+IDI_ICON_BIG ICON "icons\\wotlk.ico"
+IDI_ICON_SMALL ICON "icons\\wotlk.ico"
 #elif EXPANSION == TBC
-IDI_ICON_BIG ICON "tbc_big.ico"
-IDI_ICON_SMALL ICON "tbc_small.ico"
+IDI_ICON_BIG ICON "icons\\tbc_big.ico"
+IDI_ICON_SMALL ICON "icons\\tbc_small.ico"
 #else
-IDI_ICON_BIG ICON "vanilla_big.ico"
-IDI_ICON_SMALL ICON "vanilla_small.ico"
+IDI_ICON_BIG ICON "icons\\vanilla_big.ico"
+IDI_ICON_SMALL ICON "icons\\vanilla_small.ico"
 #endif
-IDI_ICON_CONFIG ICON "cogwheel.ico"
+IDI_ICON_CONFIG ICON "icons\\cogwheel.ico"
 
 //
 // SUPPORT FOR WINDOWS XP THEMES:
@@ -28,8 +28,8 @@ IDI_ICON_CONFIG ICON "cogwheel.ico"
 // TO CHANGE VERSION INFORMATION, EDIT PROJECT OPTIONS...
 //
 1 VERSIONINFO
-FILEVERSION 2,0,0,0
-PRODUCTVERSION 2,0,0,0
+FILEVERSION 3,0,0,0
+PRODUCTVERSION 3,0,0,0
 FILETYPE VFT_APP
 {
   BLOCK "StringFileInfo"
@@ -37,7 +37,7 @@ FILETYPE VFT_APP
 		 BLOCK "040904E4"
 		 {
 			 VALUE "CompanyName", "brotalnia"
-			 VALUE "FileVersion", "2.0.0.0"
+			 VALUE "FileVersion", "3.0.0.0"
 #if EXPANSION == CATA
 			 VALUE "FileDescription", "WoW Launcher for Cataclysm"
 #elif EXPANSION == WOTLK
@@ -48,7 +48,7 @@ FILETYPE VFT_APP
              VALUE "FileDescription", "WoW Launcher for Vanilla"
 #endif
 			 VALUE "InternalName", "WoW Launcher"
-			 VALUE "LegalCopyright", "Copyright © brotalnia 2018"
+			 VALUE "LegalCopyright", "Copyright © brotalnia 2019"
 			 VALUE "LegalTrademarks", ""
 			 VALUE "OriginalFilename", "WoW Launcher"
 			 VALUE "ProductName", "WoW Launcher"
