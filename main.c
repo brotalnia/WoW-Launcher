@@ -151,6 +151,7 @@ int APIENTRY WinMainCRTStartup (void)
 {
     int iRet;
     iRet = WinMain(GetModuleHandle(NULL), NULL, NULL, GetWindowShowState());
+    ExitProcess(iRet);
     return iRet;
 }
 
